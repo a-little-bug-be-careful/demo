@@ -49,6 +49,7 @@ public class HelloController {
     @PostMapping("/test1")
     @ResponseStatus(HttpStatus.FOUND)
     public InvokeResponse test1() {
+        System.out.println();
         return InvokeResponse.succ("succ");
     }
 }
