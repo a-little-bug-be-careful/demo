@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+
+    <!-- 使用已有的配置文件 -->
+    <properties resource="application.yml"></properties>
+    <!-- 数据库驱动 -->
+    <classPathEntry location="C:\Users\Y05926\.m2\repository\mysql\mysql-connector-java\8.0.27\mysql-connector-java-8.0.27.jar"/>
+
+    <context id="DB2Tables" targetRuntime="MyBatis3">
+        <commentGenerator>
+            <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+        <!-- 数据库连接 -->
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                        connectionURL="jdbc:mysql://192.168.133.130:3306/yujiang"
+                        userId="root"
+                        password="123456">
+        </jdbcConnection>
+
+        <!-- 非必须，类型处理器，在数据库类型和java类型之间的转换控制 -->
+        <javaTypeResolver >
+            <property name="forceBigDecimals" value="false" />
+        </javaTypeResolver>
+
+        <!-- Entity Java Class -->
+        <javaModelGenerator targetPackage="com.example.demo2.domain" targetProject="./src/main/java">
+            <property name="enableSubPackages" value="false" />
+            <property name="trimStrings" value="true" />
+        </javaModelGenerator>
+
+        <!-- Mapper XML File -->
+        <sqlMapGenerator targetPackage="mybatis"  targetProject="./src/main/resources">
+            <property name="enableSubPackages" value="false" />
+        </sqlMapGenerator>
+
+        <!-- Mapper Java Class -->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.example.demo2.mapper"  targetProject="./src/main/java">
+            <property name="enableSubPackages" value="false" />
+        </javaClientGenerator>
+
+        <!-- 需要生成的数据库表 -->
+        <table schema="yujiang" tableName="test" domainObjectName="Test" enableCountByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" enableUpdateByExample="false">
+        </table>
+
+    </context>
+</generatorConfiguration>
