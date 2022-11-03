@@ -8,8 +8,8 @@ import java.util.List;
 
 @Repository
 public interface UserMapper extends BaseMapper<User> {
-    List<User> selectUser(String id);
+    List<User> selectUser(Integer id);
     int insertUser(User user);
-    int deleteUser(String id);
+    int deleteUser(Integer id);
     int editUser(User user);
 }

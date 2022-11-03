@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 public interface UserService {
-    InvokeResponse selectUser(String id);
+    InvokeResponse selectUser(Integer id);
     InvokeResponse insertUser(User user);
-    InvokeResponse deleteUser(String id);
+    InvokeResponse deleteUser(Integer id);
     InvokeResponse editUser(User user);
 }

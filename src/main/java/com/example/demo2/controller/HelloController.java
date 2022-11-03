@@ -16,7 +16,7 @@ public class HelloController {
     private UserService userService;
 
     @GetMapping("/getUser")
-    public InvokeResponse getUser(String id) {
+    public InvokeResponse getUser(Integer id) {
         return this.userService.selectUser(id);
     }
 
@@ -26,7 +26,7 @@ public class HelloController {
     }
 
     @PostMapping("/deleteUser")
-    public InvokeResponse deleteUser(String id) {
+    public InvokeResponse deleteUser(Integer id) {
         return this.userService.deleteUser(id);
     }
 
