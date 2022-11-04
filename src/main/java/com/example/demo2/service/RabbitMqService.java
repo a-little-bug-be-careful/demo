@@ -1,8 +1,10 @@
 package com.example.demo2.service;
 
+import com.example.demo2.domain.InvokeResponse;
+
 public interface RabbitMqService {
 
-    void sendMsg();
+    InvokeResponse sendMsg(Integer id);
 
-    String receiveMsg();
+    InvokeResponse receiveMsg();
 }
