@@ -30,7 +30,10 @@ public class RabbitMqServiceImpl implements RabbitMqService {
             return InvokeResponse.fail("发送消息失败，未查询到id{" + id + "}的用户信息");
         }
         logger.info("sending msg begin>>>>");
-        rabbitTemplate.convertAndSend("TestDirectExchange", "TestDirectRouting", JSONObject.toJSONString(users));
+        //消息通过交换机0发送到队列0和队列1
+        rabbitTemplate.convertAndSend("TestDirectExchange0", "TestDirectRouting", JSONObject.toJSONString(users));
+        //消息通过交换机1发送到队列0
+        rabbitTemplate.convertAndSend("TestDirectExchange1", "TestDirectRouting", JSONObject.toJSONString(users));
         logger.info("sending msg end>>>>");
         return InvokeResponse.succ("消息发送成功");
     }
@@ -38,7 +41,7 @@ public class RabbitMqServiceImpl implements RabbitMqService {
     @Override
     public InvokeResponse receiveMsg() {
         logger.info("receiving msg begin>>>>");
-        Object object = rabbitTemplate.receiveAndConvert("TestDirectQueue");
+        Object object = rabbitTemplate.receiveAndConvert("TestDirectQueue0");
         List<User> users = JSONObject.parseObject(object.toString(), List.class);
         if (null == users) {
             return InvokeResponse.fail("无可消费消息");
