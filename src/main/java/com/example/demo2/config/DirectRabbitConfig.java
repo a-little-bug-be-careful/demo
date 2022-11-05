@@ -1,9 +1,6 @@
 package com.example.demo2.config;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.DirectExchange;
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,7 +28,12 @@ public class DirectRabbitConfig {
         return new Queue("TestDirectQueue1",true);
     }
 
-    //Direct交换机 起名：TestDirectExchange
+    /**
+     * Direct交换机 起名：TestDirectExchange（默认类型的交换机，匹配发送）
+     * 它会把消息路由到那些binding key与routing key完全匹配的Queue中。
+     * 它是一个一对一的模型，一条消息一定会被发到指定的一个队列（完全匹配）
+     * @return
+     */
     @Bean
     DirectExchange TestDirectExchange0() {
         //  return new DirectExchange("TestDirectExchange",true,true);
