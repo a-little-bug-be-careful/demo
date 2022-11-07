@@ -4,7 +4,15 @@ import com.example.demo2.domain.InvokeResponse;
 
 public interface RabbitMqService {
 
-    InvokeResponse sendMsg(Integer id);
+    InvokeResponse sendMsgByDirectExchange(Integer id);
 
-    InvokeResponse receiveMsg();
+    InvokeResponse receiveMsgByDirectExchange();
+
+    InvokeResponse sendMsgByTopicExchange(Integer id);
+
+    InvokeResponse receiveMsgByTopicExchange();
+
+    InvokeResponse sendMsgByFanoutExchange(Integer id);
+
+    InvokeResponse receiveMsgByFanoutExchange();
 }

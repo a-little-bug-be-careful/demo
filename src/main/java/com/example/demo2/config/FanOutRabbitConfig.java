@@ -10,12 +10,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FanOutRabbitConfig {
     @Bean
-    public Queue queue1() {
+    public Queue fanoutQueue1() {
         return new Queue("fanout_queueq1", true, false, false);
     }
 
     @Bean
-    public Queue queue2() {
+    public Queue fanoutQueue2() {
         return new Queue("fanout_queueq2", true, false, false);
     }
 
@@ -33,11 +33,11 @@ public class FanOutRabbitConfig {
 
     @Bean
     public Binding fanoutBinding1() {
-        return BindingBuilder.bind(queue1()).to(fanoutExchange());
+        return BindingBuilder.bind(fanoutQueue1()).to(fanoutExchange());
     }
 
     @Bean
     public Binding fanoutBinding2() {
-        return BindingBuilder.bind(queue2()).to(fanoutExchange());
+        return BindingBuilder.bind(fanoutQueue2()).to(fanoutExchange());
     }
 }

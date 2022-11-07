@@ -16,14 +16,34 @@ public class RabbitController {
     @Autowired
     private RabbitMqService rabbitMqService;
 
-    @PostMapping("/sendmsg")
-    public InvokeResponse sendMsg(Integer id) {
-        return rabbitMqService.sendMsg(id);
+    @PostMapping("/direct/sendmsg")
+    public InvokeResponse sendDirectMsg(Integer id) {
+        return rabbitMqService.sendMsgByDirectExchange(id);
     }
 
-    @PostMapping("/getmsg")
-    public InvokeResponse<List<User>> getMsg() {
-        InvokeResponse<List<User>> response = rabbitMqService.receiveMsg();
+    @PostMapping("/direct/getmsg")
+    public InvokeResponse<List<User>> getDirectMsg() {
+        InvokeResponse<List<User>> response = rabbitMqService.receiveMsgByDirectExchange();
         return response;
+    }
+
+    @PostMapping("/topic/sendmsg")
+    public InvokeResponse sendTopicMsg(Integer id) {
+        return rabbitMqService.sendMsgByTopicExchange(id);
+    }
+
+    @PostMapping("/topic/getmsg")
+    public InvokeResponse getTopicMsg() {
+        return rabbitMqService.receiveMsgByTopicExchange();
+    }
+
+    @PostMapping("/fanout/sendmsg")
+    public InvokeResponse sendFanoutMsg(Integer id) {
+        return rabbitMqService.sendMsgByFanoutExchange(id);
+    }
+
+    @PostMapping("/fanout/getmsg")
+    public InvokeResponse getFanoutMsg() {
+        return rabbitMqService.receiveMsgByFanoutExchange();
     }
 }

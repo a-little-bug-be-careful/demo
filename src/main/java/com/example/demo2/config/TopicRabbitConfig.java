@@ -1,6 +1,5 @@
 package com.example.demo2.config;
 
-import jdk.internal.icu.impl.UBiDiProps;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -11,12 +10,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class TopicRabbitConfig {
     @Bean
-    public Queue queue1() {
+    public Queue topicQueue1() {
         return new Queue("topic_queueq1", true, false, false);
     }
 
     @Bean
-    public Queue queue2() {
+    public Queue topicQueue2() {
         return new Queue("topic_queueq2", true, false, false);
     }
 
@@ -39,11 +38,11 @@ public class TopicRabbitConfig {
 
     @Bean
     public Binding topicBinding1() {
-        return BindingBuilder.bind(queue1()).to(topicExchange()).with("*.two.*");
+        return BindingBuilder.bind(topicQueue1()).to(topicExchange()).with("*.topic.*");
     }
 
     @Bean
     public Binding topicBinding2() {
-        return BindingBuilder.bind(queue2()).to(topicExchange()).with("#");
+        return BindingBuilder.bind(topicQueue2()).to(topicExchange()).with("#");
     }
 }
