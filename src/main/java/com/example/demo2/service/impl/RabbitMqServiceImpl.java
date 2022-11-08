@@ -32,10 +32,23 @@ public class RabbitMqServiceImpl implements RabbitMqService {
             return InvokeResponse.fail("发送消息失败，未查询到id{" + id + "}的用户信息");
         }
         logger.info("sending msg by direct exchange begin>>>>");
+        /**
+         * 源码简单剖析：
+         * 此处通过调用rabbitTemplate.convertAndSend方法，会默认采用SimpleMessageConverter进行序列化，生成不同contenttype类型的byte数组，创建消息体
+         * SimpleMessageConverter中有个createMessage方法，会根据传递的数据类型创建不同的消息
+         * 1. 如果数据类型为byte数组，messageProperties.setContentType("application/octet-stream")
+         * 2. 如果数据类型为string字符串，messageProperties.setContentType("text/plain")
+         * 3. 如果数据类型为实现了Serializable接口的java对象，messageProperties.setContentType("application/x-java-serialized-object")
+         */
         //消息通过交换机TestDirectExchange0发送到队列TestDirectQueue0和队列TestDirectQueue1
-        rabbitTemplate.convertAndSend("TestDirectExchange0", "TestDirectRouting", JSONObject.toJSONString(users));
+        //发送字符串消息
+        rabbitTemplate.convertAndSend("TestDirectExchange0", "TestDirectRouting", "test string");
+        //byte[]数组
+        rabbitTemplate.convertAndSend("TestDirectExchange0", "TestDirectRouting", new byte[]{1, 2});
+        //实现了Serializable接口的java对象
+        rabbitTemplate.convertAndSend("TestDirectExchange0", "TestDirectRouting", users);
         //消息通过交换机TestDirectExchange1发送到队列TestDirectQueue0
-        rabbitTemplate.convertAndSend("TestDirectExchange1", "TestDirectRouting", JSONObject.toJSONString(users));
+        rabbitTemplate.convertAndSend("TestDirectExchange1", "TestDirectRouting", users);
         logger.info("sending msg by direct exchange end>>>>");
         return InvokeResponse.succ("消息发送成功");
     }
