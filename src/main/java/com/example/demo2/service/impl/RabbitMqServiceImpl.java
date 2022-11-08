@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,14 +42,30 @@ public class RabbitMqServiceImpl implements RabbitMqService {
 
     @Override
     public InvokeResponse receiveMsgByDirectExchange() {
+        List<User> users = null, users0 = null, users1 = null;
         logger.info("receiving msg by direct exchange begin>>>>");
         Object object = rabbitTemplate.receiveAndConvert("TestDirectQueue0");
-        List<User> users = JSONObject.parseObject(object.toString(), List.class);
-        if (null == users) {
-            return InvokeResponse.fail("无可消费消息");
+        if (null != object) {
+            users0 = JSONObject.parseObject(object.toString(), List.class);
+            if (null == users0) {
+                logger.info("received msg by direct exchange: 无可消费消息");
+            } else {
+                logger.info("received msg by direct exchange: {}", users0.toString());
+            }
         }
-        logger.info("received msg by direct exchange: {}", users.toString());
-        return InvokeResponse.succ("succ", users);
+        object = rabbitTemplate.receiveAndConvert("TestDirectQueue1");
+        if (null != object) {
+            users1 = JSONObject.parseObject(object.toString(), List.class);
+            if (null == users1) {
+                logger.info("received msg by direct exchange: 无可消费消息");
+            } else {
+                logger.info("received msg by direct exchange: {}", users1.toString());
+            }
+        }
+        Map<String, List<User>> map = new HashMap<>(2);
+        map.put("TestDirectQueue0", users0);
+        map.put("TestDirectQueue1", users1);
+        return InvokeResponse.succ("succ", map);
     }
 
     @Override
@@ -70,19 +85,28 @@ public class RabbitMqServiceImpl implements RabbitMqService {
 
     @Override
     public InvokeResponse receiveMsgByTopicExchange() {
+        List<User> users1 = null;
+        List<User> users2 = null;
         logger.info("receiving msg by topic exchange begin>>>>");
         Object obj1 = rabbitTemplate.receiveAndConvert("topic_queueq1");
-        List<User> users1 = JSONObject.parseObject(obj1.toString(), List.class);
-        if (null == users1) {
-            return InvokeResponse.fail("无可消费消息");
+        if (null != obj1) {
+            users1 = JSONObject.parseObject(obj1.toString(), List.class);
+            if (null == users1) {
+                logger.info("received msg by topic exchange: 无可消费消息");
+            } else
+                logger.info("received msg by topic exchange: topic_queueq1: {}", users1.toString());
         }
         Object obj2 = rabbitTemplate.receiveAndConvert("topic_queueq2");
-        List<User> users2 = JSONObject.parseObject(obj2.toString(), List.class);
-        if (null == users2) {
-            return InvokeResponse.fail("无可消费消息");
+        if (null == obj2) {
+            logger.info("received msg by topic exchange: 无可消费消息");
+        } else {
+            users2 = JSONObject.parseObject(obj2.toString(), List.class);
+            if (null == users2) {
+                logger.info("received msg by topic exchange: 无可消费消息");
+            } else
+                logger.info("received msg by topic exchange: topic_queueq2: {}", users2.toString());
         }
-        logger.info("received msg by topic exchange: topic_queueq1: {}, topic_queueq1: {}", users1.toString(), users2.toString());
-        Map<String, List<User>> result = new HashMap<>();
+        Map<String, List<User>> result = new HashMap<>(2);
         result.put("users1", users1);
         result.put("users2", users2);
         return InvokeResponse.succ("succ", result);
@@ -90,11 +114,40 @@ public class RabbitMqServiceImpl implements RabbitMqService {
 
     @Override
     public InvokeResponse sendMsgByFanoutExchange(Integer id) {
-        return null;
+        List<User> users = this.userMapper.selectUser(id);
+        if (users.isEmpty()) {
+            return InvokeResponse.fail("发送消息失败，未查询到id{" + id + "}的用户信息");
+        }
+        logger.info("sending msg by fanout exchange begin>>>>");
+        //消息通过交换机topic_exchange发送到队列fanout_queueq1和fanout_queueq2
+        rabbitTemplate.convertAndSend("fanout_exchange", "", JSONObject.toJSONString(users));
+        logger.info("sending msg by fanout exchange end>>>>");
+        return InvokeResponse.succ("消息发送成功");
     }
 
     @Override
     public InvokeResponse receiveMsgByFanoutExchange() {
-        return null;
+        List<User> users1 = null, users2 = null;
+        logger.info("receiving msg by fanout exchange begin>>>>");
+        Object object = rabbitTemplate.receiveAndConvert("fanout_queueq1");
+        if (null != object) {
+            users1 = JSONObject.parseObject(object.toString(), List.class);
+            if (null == users1) {
+                logger.info("received msg by fanout exchange: 无可消费消息");
+            } else
+                logger.info("received msg by fanout exchange-fanout_queueq1: {}", users1.toString());
+        }
+        object = rabbitTemplate.receiveAndConvert("fanout_queueq2");
+        if (null != object) {
+            users2 = JSONObject.parseObject(object.toString(), List.class);
+            if (null == users2) {
+                return InvokeResponse.fail("无可消费消息");
+            } else
+                logger.info("received msg by fanout exchange-fanout_queueq2: {}", users2.toString());
+        }
+        Map<String, List<User>> map = new HashMap<>(2);
+        map.put("fanout_queueq1", users1);
+        map.put("fanout_queueq2", users2);
+        return InvokeResponse.succ("succ", map);
     }
 }

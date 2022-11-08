@@ -6,6 +6,7 @@ import com.example.demo2.service.RabbitMqService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
@@ -16,33 +17,33 @@ public class RabbitController {
     @Autowired
     private RabbitMqService rabbitMqService;
 
-    @PostMapping("/direct/sendmsg")
+    @PostMapping("/direct/msg")
     public InvokeResponse sendDirectMsg(Integer id) {
         return rabbitMqService.sendMsgByDirectExchange(id);
     }
 
-    @PostMapping("/direct/getmsg")
+    @GetMapping("/direct/msg")
     public InvokeResponse<List<User>> getDirectMsg() {
         InvokeResponse<List<User>> response = rabbitMqService.receiveMsgByDirectExchange();
         return response;
     }
 
-    @PostMapping("/topic/sendmsg")
+    @PostMapping("/topic/msg")
     public InvokeResponse sendTopicMsg(Integer id) {
         return rabbitMqService.sendMsgByTopicExchange(id);
     }
 
-    @PostMapping("/topic/getmsg")
+    @GetMapping("/topic/msg")
     public InvokeResponse getTopicMsg() {
         return rabbitMqService.receiveMsgByTopicExchange();
     }
 
-    @PostMapping("/fanout/sendmsg")
+    @PostMapping("/fanout/msg")
     public InvokeResponse sendFanoutMsg(Integer id) {
         return rabbitMqService.sendMsgByFanoutExchange(id);
     }
 
-    @PostMapping("/fanout/getmsg")
+    @GetMapping("/fanout/msg")
     public InvokeResponse getFanoutMsg() {
         return rabbitMqService.receiveMsgByFanoutExchange();
     }
