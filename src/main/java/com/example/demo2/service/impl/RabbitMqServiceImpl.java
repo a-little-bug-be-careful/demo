@@ -3,13 +3,16 @@ package com.example.demo2.service.impl;
 import com.alibaba.fastjson2.JSONObject;
 import com.example.demo2.domain.InvokeResponse;
 import com.example.demo2.domain.User;
+import com.example.demo2.domain.User1;
 import com.example.demo2.mapper.UserMapper;
 import com.example.demo2.service.RabbitMqService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,15 +86,23 @@ public class RabbitMqServiceImpl implements RabbitMqService {
 
     @Override
     public InvokeResponse sendMsgByTopicExchange(Integer id) {
-        List<User> users = this.userMapper.selectUser(id);
-        if (users.isEmpty()) {
-            return InvokeResponse.fail("发送消息失败，未查询到id{" + id + "}的用户信息");
-        }
+        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+        List<User1> users = new ArrayList<>();
+        User1 user1 = new User1();
+        user1.setName("仙人之下我无敌");
+        user1.setAge(18);
+        user1.setSex("1");
+        users.add(user1);
+        user1 = new User1();
+        user1.setName("仙人之上一换一");
+        user1.setAge(20);
+        user1.setSex("0");
+        users.add(user1);
         logger.info("sending msg by topic exchange begin>>>>");
         //消息通过交换机topic_exchange发送到队列topic_queueq1和topic_queueq2
-        rabbitTemplate.convertAndSend("topic_exchange", "test.topic.", JSONObject.toJSONString(users));
+        rabbitTemplate.convertAndSend("topic_exchange", "test.topic.", users);
         //消息通过交换机topic_exchange发送到队列topic_queueq2
-        rabbitTemplate.convertAndSend("topic_exchange", "test.hahaha.ok", JSONObject.toJSONString(users));
+        rabbitTemplate.convertAndSend("topic_exchange", "test.hahaha.ok", users);
         logger.info("sending msg by direct exchange end>>>>");
         return InvokeResponse.succ("消息发送成功");
     }
