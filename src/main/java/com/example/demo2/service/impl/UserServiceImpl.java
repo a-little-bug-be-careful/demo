@@ -7,7 +7,6 @@ import com.example.demo2.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,7 +20,7 @@ public class UserServiceImpl implements UserService {
     private String port;
 
     @Override
-    public InvokeResponse selectUser(String id) {
+    public InvokeResponse selectUser(Integer id) {
 
         LocalDateTime localDateTime = LocalDateTime.now();
         StringBuffer sb = new StringBuffer();
@@ -46,7 +45,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public InvokeResponse deleteUser(String id) {
+    public InvokeResponse deleteUser(Integer id) {
+        List<User> users = this.userMapper.selectUser(id);
+        if (users.isEmpty()) {
+            return InvokeResponse.fail("删除用户失败：未查询到用户信息");
+        }
         int i = this.userMapper.deleteUser(id);
         if (i > 0) {
             return InvokeResponse.succ("删除用户成功");
@@ -56,6 +59,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public InvokeResponse editUser(User user) {
+        List<User> users = this.userMapper.selectUser(user.getId());
+        if (users.isEmpty()) {
+            return InvokeResponse.fail("更新用户失败：未查询到用户信息");
+        }
         int i = this.userMapper.editUser(user);
         if (i > 0) {
             return InvokeResponse.succ("更新用户信息成功");

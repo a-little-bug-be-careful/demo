@@ -2,6 +2,7 @@ package com.example.demo2.controller;
 
 import com.example.demo2.domain.InvokeResponse;
 import com.example.demo2.domain.User;
+import com.example.demo2.service.RabbitMqService;
 import com.example.demo2.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,13 +11,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
-public class HelloController {
+public class UserController {
 
     @Autowired
     private UserService userService;
 
     @GetMapping("/getUser")
-    public InvokeResponse getUser(String id) {
+    public InvokeResponse getUser(Integer id) {
         return this.userService.selectUser(id);
     }
 
@@ -26,7 +27,7 @@ public class HelloController {
     }
 
     @PostMapping("/deleteUser")
-    public InvokeResponse deleteUser(String id) {
+    public InvokeResponse deleteUser(Integer id) {
         return this.userService.deleteUser(id);
     }
 
@@ -49,6 +50,7 @@ public class HelloController {
     @PostMapping("/test1")
     @ResponseStatus(HttpStatus.FOUND)
     public InvokeResponse test1() {
+        System.out.println();
         return InvokeResponse.succ("succ");
     }
 }

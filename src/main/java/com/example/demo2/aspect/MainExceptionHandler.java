@@ -1,13 +1,13 @@
 package com.example.demo2.aspect;
 
-import com.example.demo2.controller.HelloController;
+import com.example.demo2.controller.UserController;
 import com.example.demo2.domain.InvokeResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(assignableTypes = {HelloController.class})
+@RestControllerAdvice(assignableTypes = {UserController.class})
 public class MainExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
