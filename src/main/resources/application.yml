@@ -13,8 +13,15 @@ spring:
   rabbitmq:
     host: 192.168.133.130
     port: 5672
-    username: guest
-    password: guest
+    username: guest # rabbitmq用户名
+    password: guest # rabbitmq用户密码
+    # virtual-host: /  配置虚拟主机，不配置的话默认是 /，如果需要配置，则需要在rabbitmq服务中创建对应的虚拟主机和用户，同时配置用户访问虚拟主机权限
+    # 参考链接 https://www.cnblogs.com/max1995/p/13280054.html?utm_source=tuicool
+
+    # 配置admin用户访问/admin虚拟主机，用户只能同时配置一个
+    # username: admin
+    # password: admin
+    # virtual-host: /admin
 
 mybatis-plus:
   configuration:
