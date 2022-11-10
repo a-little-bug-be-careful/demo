@@ -98,10 +98,4 @@ public class DirectRabbitConfig {
         //生命死信队列
         return new Queue("dead_queue", true, false, false);
     }
-
-    @Bean
-    Binding deadBinding() {
-        //将死信交换机和死信队列绑定
-        return BindingBuilder.bind(deadQueue()).to(deadExchange()).with("dead");
-    }
 }

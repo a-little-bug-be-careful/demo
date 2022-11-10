@@ -3,6 +3,7 @@ package com.example.demo2.config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AcknowledgeMode;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
@@ -56,6 +57,7 @@ public class RabbitMqConfig {
     public RabbitTemplate getRabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+        //设置确认回调
         rabbitTemplate.setConfirmCallback(new RabbitTemplate.ConfirmCallback() {
             @Override
             public void confirm(CorrelationData correlationData, boolean ack, String cause) {
@@ -63,6 +65,16 @@ public class RabbitMqConfig {
                     //如果消息未发送成功
                     LOGGER.error("消息发送失败，请重试");
                 }
+            }
+        });
+        //true:交换机无法将消息进行路由时(找不到任何路由，包括死信队列的路由)，会将该消息返回给生产者
+        //false:如果发现消息无法进行路由，则直接丢弃;默认false
+        rabbitTemplate.setMandatory(true);
+        //设置回退消息交给谁处理
+        rabbitTemplate.setReturnCallback(new RabbitTemplate.ReturnCallback() {
+            @Override
+            public void returnedMessage(Message message, int replyCode, String replyText, String exchange, String routingKey) {
+                LOGGER.error("--------无法路由，回退处理--------");
             }
         });
         return rabbitTemplate;
