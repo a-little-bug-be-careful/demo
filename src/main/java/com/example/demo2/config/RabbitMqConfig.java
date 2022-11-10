@@ -69,12 +69,13 @@ public class RabbitMqConfig {
         });
         //true:交换机无法将消息进行路由时(找不到任何路由，包括死信队列的路由)，会将该消息返回给生产者
         //false:如果发现消息无法进行路由，则直接丢弃;默认false
+        //但是如果消息过期了，也不会触发这个机制
         rabbitTemplate.setMandatory(true);
         //设置回退消息交给谁处理
         rabbitTemplate.setReturnCallback(new RabbitTemplate.ReturnCallback() {
             @Override
             public void returnedMessage(Message message, int replyCode, String replyText, String exchange, String routingKey) {
-                LOGGER.error("--------无法路由，回退处理--------");
+                LOGGER.error("--------无法路由，回退处理--------{}", new String(message.getBody()));
             }
         });
         return rabbitTemplate;
