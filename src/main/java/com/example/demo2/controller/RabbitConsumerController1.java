@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 class RabbitConsumerController1 {
-    private static final Logger logger = LoggerFactory.getLogger(RabbitConsumerController1.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitConsumerController1.class);
 /*    @RabbitListener(queues = "TestDirectQueue1")
     public void getMsg(String msg) {
         try {
@@ -22,6 +22,6 @@ class RabbitConsumerController1 {
 
     @RabbitListener( queues = "dead_queue")
     public void getDeadMsg(String msg) {
-        logger.info("receive dead msg info from TestDirectQueue1: {}", msg);
+        LOGGER.info("receive dead msg info from TestDirectQueue1: {}", msg);
     }
 }

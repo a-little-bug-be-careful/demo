@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 @RabbitListener(queues = "TestDirectQueue0")
 public class RabbitConsumerController {
-    private static final Logger logger = LoggerFactory.getLogger(RabbitConsumerController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitConsumerController.class);
 
     /**
      * rabbitmq消息监听方法不要有返回值，如果有返回值，系统会报错@exception {Cannot determine ReplyTo message property value: "
@@ -33,19 +33,19 @@ public class RabbitConsumerController {
     @RabbitHandler
     public void getMsg2(List<User> list) {
         list.stream().forEach(a -> {
-            logger.info("receive java bean info from TestDirectQueue0: id {}; name {}; sex {}; age {}", a.getId(), a.getName(), a.getSex(), a.getAge());
+            LOGGER.info("receive java bean info from TestDirectQueue0: id {}; name {}; sex {}; age {}", a.getId(), a.getName(), a.getSex(), a.getAge());
         });
     }
 
     //获取字符串消息
     @RabbitHandler
     public void getMsgStr(String str) {
-        logger.info("receive string msg from TestDirectQueue0: {}", str);
+        LOGGER.info("receive string msg from TestDirectQueue0: {}", str);
     }
 
     //获取byte[]数组消息
     @RabbitHandler
     public void getBytes(byte[] bytes) {
-        logger.info("receive byte[] msg from TestDirectQueue0: {}", bytes);
+        LOGGER.info("receive byte[] msg from TestDirectQueue0: {}", bytes);
     }
 }

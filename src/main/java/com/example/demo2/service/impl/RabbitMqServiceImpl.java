@@ -9,8 +9,10 @@ import com.example.demo2.service.RabbitMqService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -185,4 +187,6 @@ public class RabbitMqServiceImpl implements RabbitMqService {
         });
         return InvokeResponse.succ("消息发送成功");
     }
+
+
 }
