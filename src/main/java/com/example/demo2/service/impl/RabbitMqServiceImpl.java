@@ -174,4 +174,15 @@ public class RabbitMqServiceImpl implements RabbitMqService {
         map.put("fanout_queueq2", users2);
         return InvokeResponse.succ("succ", map);
     }
+
+    @Override
+    public InvokeResponse sendTtlMsgByDirectExchange() {
+        //设置单条消息过期时间TTL，单位毫秒，如果队列也设置了过期时间，取两者之间最小值
+        //如果 不设置 TTL，表示消息永远不会过期，如果将 TTL 设置为 0，则表示除非此时可以直接投递该消息到消费者，否则该消息将会被丢弃
+        rabbitTemplate.convertAndSend("TestDirectExchange1", "TestDirectRouting", "1234", m -> {
+            m.getMessageProperties().setExpiration("100000");
+            return m;
+        });
+        return InvokeResponse.succ("消息发送成功");
+    }
 }

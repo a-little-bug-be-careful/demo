@@ -49,4 +49,9 @@ public class RabbitController {
     public InvokeResponse getFanoutMsg() {
         return rabbitMqService.receiveMsgByFanoutExchange();
     }
+
+    @PostMapping("/direct/msg/ttl")
+    public InvokeResponse sendDirectTtlMsg() {
+        return rabbitMqService.sendTtlMsgByDirectExchange();
+    }
 }

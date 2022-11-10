@@ -4,6 +4,9 @@ import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Configuration
 public class DirectRabbitConfig {
 
@@ -25,7 +28,20 @@ public class DirectRabbitConfig {
 
     @Bean
     public Queue TestDirectQueue1() {
-        return new Queue("TestDirectQueue1",true);
+        //设置队列中消息的过期时间
+        Map<String, Object> argsMap = new HashMap<>(3);
+        argsMap.put("x-message-ttl", 30000);//队列中的消息未被消费则30秒后过期
+        /**死信队列设置：存放死信消息
+         * 死信消息产生原因
+         * 消息 TTL 过期
+         * 队列达到最大长度(队列满了，无法再添加数据到 mq 中)
+         * 消息被拒绝(basic.reject 或 basic.nack)并且 requeue=false
+         */
+        //声明当前队列绑定的死信交换机
+        argsMap.put("x-dead-letter-exchange", "dead_exchange");
+        //声明当前队列的死信路由 key
+        argsMap.put("x-dead-letter-routing-key", "dead");
+        return new Queue("TestDirectQueue1",true, false, false, argsMap);
     }
 
     /**
@@ -69,5 +85,23 @@ public class DirectRabbitConfig {
     @Bean
     DirectExchange lonelyDirectExchange() {
         return new DirectExchange("lonelyDirectExchange");
+    }
+
+    @Bean
+    DirectExchange deadExchange() {
+        //声明死信交换机
+        return new DirectExchange("dead_exchange", true, false);
+    }
+
+    @Bean
+    Queue deadQueue() {
+        //生命死信队列
+        return new Queue("dead_queue", true, false, false);
+    }
+
+    @Bean
+    Binding deadBinding() {
+        //将死信交换机和死信队列绑定
+        return BindingBuilder.bind(deadQueue()).to(deadExchange()).with("dead");
     }
 }
