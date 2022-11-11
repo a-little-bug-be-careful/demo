@@ -74,14 +74,14 @@ public class DirectRabbitConfig {
         return BindingBuilder.bind(TestDirectQueue0()).to(TestDirectExchange0()).with("TestDirectRouting");
     }
 
-/*    @Bean
+ /*   @Bean
     Binding bindingDirect1() {
         return BindingBuilder.bind(TestDirectQueue1()).to(TestDirectExchange0()).with("TestDirectRouting");
     }*/
 
     @Bean
     Binding bindingDirect2() {
-        return BindingBuilder.bind(TestDirectQueue1()).to(TestDirectExchange1()).with("TestDirectRoutin");
+        return BindingBuilder.bind(TestDirectQueue1()).to(TestDirectExchange1()).with("TestDirectRouting");
     }
 
 

@@ -43,6 +43,10 @@ spring:
         # acknowledge-mode: none 无应答，rabbitmq默认consumer正确处理所有请求
         # acknowledge-mode: auto consumer自动应答，处理成功（注意：此处的成功确认是没有发生异常）发出ack，处理失败发出nack。rabbitmq发出消息后会等待consumer端应答，只有收到ack确定信息后才会将消息在rabbitmq清除掉。收到nack异常信息的处理方法由setDefaultRequeueReject()方法设置，这种模式下，发送错误的消息可以恢复
 
+#redis配置
+  redis:
+    host: 192.168.133.130
+    port: 6379
 
 mybatis-plus:
   configuration:

@@ -19,6 +19,16 @@ public class FanOutRabbitConfig {
         return new Queue("fanout_queueq2", true, false, false);
     }
 
+    @Bean
+    public Queue fanoutQueue3() {
+        return new Queue("fanout_queueq3", true, false, false);
+    }
+
+    @Bean
+    public Queue fanoutQueue4() {
+        return new Queue("fanout_queueq4", true, false, false);
+    }
+
     /**
      * Fanout 类型（广播发送）
      * 它会把所有发送到该Exchange的消息路由到所有与它绑定的Queue中。
@@ -32,6 +42,11 @@ public class FanOutRabbitConfig {
     }
 
     @Bean
+    public FanoutExchange fanoutExchange3() {
+        return new FanoutExchange("fanout_exchange3", true, false, null);
+    }
+
+    @Bean
     public Binding fanoutBinding1() {
         return BindingBuilder.bind(fanoutQueue1()).to(fanoutExchange());
     }
@@ -39,5 +54,15 @@ public class FanOutRabbitConfig {
     @Bean
     public Binding fanoutBinding2() {
         return BindingBuilder.bind(fanoutQueue2()).to(fanoutExchange());
+    }
+
+    @Bean
+    public Binding fanoutBinding3() {
+        return BindingBuilder.bind(fanoutQueue3()).to(fanoutExchange3());
+    }
+
+    @Bean
+    public Binding fanoutBinding4() {
+        return BindingBuilder.bind(fanoutQueue4()).to(fanoutExchange3());
     }
 }

@@ -14,7 +14,7 @@ import java.util.List;
  * 2. 直接在方法上使用，监听指定队列，这种比较适用于队列中消息类型单一的情形，比如都是java bean(RabbitConsumerController1类中的方式)
  */
 @RestController
-@RabbitListener(queues = "TestDirectQueue0")
+//@RabbitListener(queues = "TestDirectQueue0")
 public class RabbitConsumerController {
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitConsumerController.class);
 
