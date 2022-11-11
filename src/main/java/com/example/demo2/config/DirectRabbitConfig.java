@@ -57,7 +57,10 @@ public class DirectRabbitConfig {
 
     @Bean
     DirectExchange TestDirectExchange1() {
-        return new DirectExchange("TestDirectExchange1",true,false);
+        Map<String, Object> argsMap = new HashMap<>(1);
+        //绑定备份交换机
+        argsMap.put("alternate-exchange", "alternative_exchange");
+        return new DirectExchange("TestDirectExchange1",true,false, argsMap);
     }
 
     /**绑定  将队列和交换机绑定, 并设置用于匹配键：TestDirectRouting
@@ -78,7 +81,7 @@ public class DirectRabbitConfig {
 
     @Bean
     Binding bindingDirect2() {
-        return BindingBuilder.bind(TestDirectQueue1()).to(TestDirectExchange1()).with("TestDirectRouting");
+        return BindingBuilder.bind(TestDirectQueue1()).to(TestDirectExchange1()).with("TestDirectRoutin");
     }
 
 
@@ -97,5 +100,23 @@ public class DirectRabbitConfig {
     Queue deadQueue() {
         //生命死信队列
         return new Queue("dead_queue", true, false, false);
+    }
+
+    @Bean
+    Queue alternativeQueue() {
+        //声明备份队列
+        return new Queue("alternative_queue", true, false, false);
+    }
+
+    @Bean
+    FanoutExchange alternativeExchange() {
+        //声明备份交换机
+        return new FanoutExchange("alternative_exchange", true, false);
+    }
+
+    @Bean
+    Binding alternativeBinding() {
+        //将备份交换机和备份队列绑定
+        return BindingBuilder.bind(alternativeQueue()).to(alternativeExchange());
     }
 }
