@@ -57,7 +57,7 @@ public class RabbitMqConfig {
     public RabbitTemplate getRabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
-        //设置确认回调
+        //设置确认回调，但如果消息到达交换机后无法被路由，将会被直接丢弃，发送端将不知道消息是否发送成功，无法重新发送，需要配合回调函数，也就是下面的rabbitTemplate.setReturnCallback
         rabbitTemplate.setConfirmCallback(new RabbitTemplate.ConfirmCallback() {
             @Override
             public void confirm(CorrelationData correlationData, boolean ack, String cause) {
