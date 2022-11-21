@@ -125,6 +125,41 @@ public class RedisUtil {
     }
 
     /**
+     * 原子操作，如果key不存在，设置key值返回true，如果key存在，返回false
+     * @param key
+     * @param value
+     * @param time
+     * @return
+     */
+    public boolean setIfAbsent(String key, Object value, long time) {
+        try {
+            if (time > 0) {
+                return redisTemplate.opsForValue().setIfAbsent(key, value, time, TimeUnit.SECONDS);
+            } else {
+                return redisTemplate.opsForValue().setIfAbsent(key, value);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * 原子操作，如果key不存在，设置key值返回true，如果key存在，返回false
+     * @param key
+     * @param value
+     * @return
+     */
+    public boolean setIfAbsent(String key, Object value) {
+        try {
+            return redisTemplate.opsForValue().setIfAbsent(key, value);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
      * 递增
      *
      * @param key   键
