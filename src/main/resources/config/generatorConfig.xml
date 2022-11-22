@@ -4,6 +4,7 @@
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 
 <generatorConfiguration>
+    <!-- 代码自动生成器 -->
 
     <!-- 使用已有的配置文件 -->
     <properties resource="application.yml"></properties>
