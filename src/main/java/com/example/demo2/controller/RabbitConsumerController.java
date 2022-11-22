@@ -4,7 +4,6 @@ import com.example.demo2.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 

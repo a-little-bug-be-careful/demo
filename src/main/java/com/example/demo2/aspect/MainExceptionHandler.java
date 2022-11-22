@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+/**
+ * 专门捕获controller中指定类型的异常信息
+ */
 @RestControllerAdvice(assignableTypes = {UserController.class})
 public class MainExceptionHandler {
 

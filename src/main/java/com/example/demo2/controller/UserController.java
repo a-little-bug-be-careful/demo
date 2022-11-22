@@ -2,7 +2,6 @@ package com.example.demo2.controller;
 
 import com.example.demo2.domain.InvokeResponse;
 import com.example.demo2.domain.User;
-import com.example.demo2.service.RabbitMqService;
 import com.example.demo2.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
