@@ -163,5 +163,60 @@
 
 ## 三、springboot整合redis-cluster集群
 
+1. 导入项目依赖
 
+   ~~~xml
+   		<dependency>
+               <groupId>org.apache.commons</groupId>
+               <artifactId>commons-pool2</artifactId>
+               <version>2.9.0</version>
+           </dependency>
+   
+           <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-redis -->
+           <dependency>
+               <groupId>org.springframework.boot</groupId>
+               <artifactId>spring-boot-starter-data-redis</artifactId>
+               <version>2.4.0</version>
+           </dependency>
+   
+           <!-- 需要引入这个依赖，不然在与redis集群连接时会报错nested exception is io.lettuce.core.RedisConnectionException: Unable to connect to
+            版本不兼容的问题造成的-->
+           <dependency>
+               <groupId>io.lettuce</groupId>
+               <artifactId>lettuce-core</artifactId>
+               <version>5.3.7.RELEASE</version>
+           </dependency>
+   ~~~
 
+2. 编写配置文件
+
+   ~~~yaml
+   #redis配置
+     redis:
+       # 单机模式
+       # host: 192.168.133.130
+       # port: 6379
+       lettuce: # springboot2.0之后使用lettuce客户端连接redis服务器，需要在pom文件中引入相应依赖
+         pool:
+           min-idle: 0
+           max-idle: 8
+           max-active: 8
+   
+       #redis集群分为主从模式、哨兵模式、集群模式三种
+   
+       #配置redis-cluster集群模式打开下面注释
+       cluster:
+         nodes:
+         # 此处的ip1、ip2、ip3需要配置成自己的redis服务器地址
+           - ip1:6381
+           - ip1:6382
+           - ip2:6381
+           - ip2:6382
+           - ip3:6381
+           - ip3:6382
+         max-redirects: 5
+       timeout: 6000ms
+       database: 0
+   ~~~
+
+   
