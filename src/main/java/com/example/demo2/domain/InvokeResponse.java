@@ -41,6 +41,10 @@ public class InvokeResponse<T> {
         return new InvokeResponse<>("1", "succ", t);
     }
 
+    public static InvokeResponse succ() {
+        return new InvokeResponse("1", "scc");
+    }
+
     public static InvokeResponse fail(String msg) {
         return new InvokeResponse("0", msg, null);
     }

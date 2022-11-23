@@ -15,4 +15,8 @@ public interface RabbitMqService {
     InvokeResponse sendMsgByFanoutExchange(Integer id);
 
     InvokeResponse receiveMsgByFanoutExchange();
+
+    InvokeResponse sendTtlMsgByDirectExchange();
+
+    InvokeResponse sendFanoutRepeatMsg();
 }

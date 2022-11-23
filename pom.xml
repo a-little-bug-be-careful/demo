@@ -83,6 +83,26 @@
             <version>2.0.17</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+            <version>2.9.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-redis -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+
+        <!-- 需要引入这个依赖，不然在与redis集群连接时会报错nested exception is io.lettuce.core.RedisConnectionException: Unable to connect to
+         版本不兼容的问题造成的-->
+        <dependency>
+            <groupId>io.lettuce</groupId>
+            <artifactId>lettuce-core</artifactId>
+            <version>5.3.7.RELEASE</version>
+        </dependency>
 
     </dependencies>
 

@@ -1,9 +1,6 @@
 server:
   port: 8060
 
-login:
-  name: yujiang
-
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -13,9 +10,73 @@ spring:
   rabbitmq:
     host: 192.168.133.130
     port: 5672
-    username: guest
-    password: guest
+    username: guest # rabbitmq用户名
+    password: guest # rabbitmq用户密码
+    # virtual-host: /  配置虚拟主机，不配置的话默认是 /，如果需要配置，则需要在rabbitmq服务中创建对应的虚拟主机和用户，同时配置用户访问虚拟主机权限
+    # 参考链接 https://www.cnblogs.com/max1995/p/13280054.html?utm_source=tuicool
 
+    # 配置admin用户访问/admin虚拟主机，用户只能同时配置一个
+    # username: admin
+    # password: admin
+    # virtual-host: /admin
+
+    # 生产者发布确认机制
+    # 1. NONE 默认值，禁用发布确认机制
+    # 2. correlated 发布消息成功到交换器后会触发回调方法
+    # 3. simple 经测试有两种效果，其一效果和 CORRELATED 值一样会触发回调方法；
+    #    其二在发布消息成功后使用 rabbitTemplate 调用 waitForConfirms 或 waitForConfirmsOrDie 方法等待 broker 节点返回发送结果，根据返回结果来判定下一步的逻辑，要注意的点是waitForConfirmsOrDie 方法如果返回 false 则会关闭 channel，则接下来无法发送消息到 broker。
+    #版权声明：本文为CSDN博主「收藏=学会了」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+    #原文链接：https://blog.csdn.net/AhangA/article/details/121641034
+    publisher-confirm-type: correlated
+
+    #指定消费端消息确认机制  参考链接 https://blog.csdn.net/qq_29595463/article/details/109527115
+    # 基于配置  优先级 < 基于代码配置 < 基于注解配置
+    listener:
+      simple:
+        concurrency: 1 #消费端最小并发数
+        max-concurrency: 3 #消费端最大并发数
+        prefetch: 2 #一次处理的消息数量  消费者预取2条数据到内存，默认为250条，如果消费者未处理完这两条消息（未ack的消息数量=2），则不会再向该消费者投送消息
+        #acknowledge-mode: manual #消息确认机制，手动确认，需要消费者发送ack后才开始消费下面两条消息（prefetch指定的数量）
+        # acknowledge-mode: none 无应答，rabbitmq默认consumer正确处理所有请求
+        # acknowledge-mode: auto consumer自动应答，处理成功（注意：此处的成功确认是没有发生异常）发出ack，处理失败发出nack。rabbitmq发出消息后会等待consumer端应答，只有收到ack确定信息后才会将消息在rabbitmq清除掉。收到nack异常信息的处理方法由setDefaultRequeueReject()方法设置，这种模式下，发送错误的消息可以恢复
+
+#redis配置
+  redis:
+    # 单机模式
+    # host: 192.168.133.130
+    # port: 6379
+    lettuce:
+      pool:
+        min-idle: 0
+        max-idle: 8
+        max-active: 8
+
+      #redis集群分为主从模式、哨兵模式、集群模式三种
+
+      #配置redis集群哨兵模式需要打开下面注释，单机不需要打开
+    #cluster:
+      # 集群信息
+      #nodes: 192.168.133.130:6379, 192.168.133.131:6379, 192.168.133.132:6379
+      # 默认值是5 一般当此值设置过大时，容易报：Too many Cluster redirections
+      #max-redirects: 5
+    #哨兵也要配置，不然会报错
+    #sentinel:
+     # master: mymaster
+      #配置的是哨兵的ip地址:端口号
+      #nodes: 192.168.133.130:26379, 192.168.133.131:26379, 192.168.133.132:26379
+
+    #配置redis-cluster集群模式打开下面注释
+    cluster:
+      nodes:
+        - 192.168.133.130:6381
+        - 192.168.133.130:6382
+        - 192.168.133.131:6381
+        - 192.168.133.131:6382
+        - 192.168.133.132:6381
+        - 192.168.133.132:6382
+      max-redirects: 5
+    timeout: 6000ms
+    database: 0
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #开启sql日志
