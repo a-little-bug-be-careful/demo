@@ -25,7 +25,7 @@ spring:
     # 2. correlated 发布消息成功到交换器后会触发回调方法
     # 3. simple 经测试有两种效果，其一效果和 CORRELATED 值一样会触发回调方法；
     #    其二在发布消息成功后使用 rabbitTemplate 调用 waitForConfirms 或 waitForConfirmsOrDie 方法等待 broker 节点返回发送结果，根据返回结果来判定下一步的逻辑，要注意的点是waitForConfirmsOrDie 方法如果返回 false 则会关闭 channel，则接下来无法发送消息到 broker。
-    #版权声明：本文为CSDN博主「收藏=学会了」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+
     #原文链接：https://blog.csdn.net/AhangA/article/details/121641034
     publisher-confirm-type: correlated
 
