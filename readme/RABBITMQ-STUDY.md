@@ -314,16 +314,232 @@ docker安装部署rabbitmq以及springboot整合rabbitmq请参考 **/readme/RABB
      Object obj1 = rabbitTemplate.receiveAndConvert("topic_queueq1");
      ~~~
 
-## 四、消息监听机制
+## 四、消费者消息监听机制
+
+1. 使用方法主动接收指定队列的消息
+
+   ~~~java
+   Object object = rabbitTemplate.receiveAndConvert("TestDirectQueue0")
+   ~~~
+
+   
+
+2. @RabbitListener监听指定队列的消息
+
+   @RabbitListener监听指定队列，如果不和@RabbitHandler联用，可以将注解加在方法上，使用如下
+
+   ~~~java
+   //注解不要忘了加，不一定是@RestController，可以是其他的注解比如@component，能被spring容器管理就行
+   @RestController
+   public class RabbitConsumerController2 {
+       private static final Logger LOGGER = LoggerFactory.getLogger(RabbitConsumerController2.class);
+   /**
+        * 这里的ackMode = "MANUAL"代表手动确认消息，是一种消息确认机制，MANUAL要大写，否则启动会报{找不到枚举信息}，基于注解配置的消息确认机制优先级最高，> 基于代码配置 > 基于配置文件配置
+        * containerFactory指定消息消费者监听容器工厂，是一个配置类，可以自定义消息序列化机制等（在第五节会有详细介绍）
+        * @param list
+        */
+       @RabbitListener(queues = "topic_queueq2", containerFactory = "rabbitListenerContainerFactory1", ackMode = "MANUAL")
+       public void getMsg(List<User1> list, Channel channel, Message message) {
+           LOGGER.info("getMsg receive json data: {}", list);
+           try {
+               //手动消息确认
+               channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+           } catch (IOException ioException) {
+               LOGGER.error("getMsg ack exception {}", ioException.getMessage());
+           }
+   
+           LOGGER.info("getMsg msg deal done");
+       }
+   }
+   ~~~
+
+   
+
+3. @RabbitListener和@RabbitHandler联合使用监听指定队列的消息
+
+   @RabbitListener加在类上，监听指定的队列，可以监听多个队列，通过queues属性指定监听队列，@RabbitHandler加在方法上监听具体的队列，消费队列中的信息。@RabbitHandler注解的方法，通过方法参数匹配消费队列中的消息，如果方法参数为string，则消费对应的string信息；如果是byte[]数组，则消费对应的byte[]信息；如果是java对象，则消费对应的java对象信息
+
+   ~~~java
+   package com.example.demo2.controller;
+   
+   import com.example.demo2.domain.User;
+   import org.slf4j.Logger;
+   import org.slf4j.LoggerFactory;
+   import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+   import org.springframework.amqp.rabbit.annotation.RabbitListener;
+   import org.springframework.web.bind.annotation.RestController;
+   import java.util.List;
+   
+   /**
+    * 消息监听的方式 使用@RabbitListener注解、@RabbitHandler注解
+    * 1. 该注解可以使用在类上，可以监听指定队列，但是要和@RabbitHandler结合使用(RabbitConsumerController类中的方式)
+    * 2. 直接在方法上使用，监听指定队列，这种比较适用于队列中消息类型单一的情形，比如都是java bean(RabbitConsumerController1类中的方式)
+    */
+   @RestController
+   @RabbitListener(queues = "TestDirectQueue0")
+   public class RabbitConsumerController {
+       private static final Logger LOGGER = LoggerFactory.getLogger(RabbitConsumerController.class);
+   
+       /**
+        * rabbitmq消息监听方法不要有返回值，如果有返回值，系统会报错@exception {Cannot determine ReplyTo message property value: "
+        * 								+ "Request message does not contain reply-to property, " +
+        * 								"and no default Exchange was set.}
+        * 方法参数要和队列中存储的数据类型保持一致，根据	contenttype确定
+        * 1. application/octet-stream 对应byte[]数组
+        * 2. text/plain 对应string字符串
+        * 3. application/x-java-serialized-object 对应实现了Serializable接口的java对象
+        * @param list
+        */
+   
+       //获取实现了Serializable接口的java对象
+       @RabbitHandler
+       public void getMsg2(List<User> list) {
+           list.stream().forEach(a -> {
+               LOGGER.info("receive java bean info from TestDirectQueue0: id {}; name {}; sex {}; age {}", a.getId(), a.getName(), a.getSex(), a.getAge());
+           });
+       }
+   
+       //获取字符串消息
+       @RabbitHandler
+       public void getMsgStr(String str) {
+           LOGGER.info("receive string msg from TestDirectQueue0: {}", str);
+       }
+   
+       //获取byte[]数组消息
+       @RabbitHandler
+       public void getBytes(byte[] bytes) {
+           LOGGER.info("receive byte[] msg from TestDirectQueue0: {}", bytes);
+       }
+   }
+   ~~~
+
+   
+
+## 五、rabbitmq消息序列化
+
+rabbitmq会默认采用SimpleMessageConverter进行序列化，将消息序列化为byte[]数组
+
+* SimpleMessageConverter中有个createMessage方法，会根据传递的数据类型创建不同的消息
+         1. 如果数据类型为byte数组，messageProperties.setContentType("application/octet-stream")
+            2. 如果数据类型为string字符串，messageProperties.setContentType("text/plain")
+            3. 如果数据类型为实现了Serializable接口的java对象，messageProperties.setContentType("application/x-java-serialized-object")
+* 由于我们发送消息时，可能会经常使用java对象作为消息体，而使用默认的序列化机制，java对象需要实现Serializable接口，第一每个对象都实现该接口就比较繁琐，第二jdk自带的Serializable序列化机制可能会存在问题，比如它每次序列化时都会将整个类信息都序列化，包括类名等额外的我们其实并不需要的信息，导致序列化后的字节数组比较大，另外该种序列化机制在反序列化时可能会存在问题，比如发送端和接收端java对象不一致（发送端加了一个字段，接收端没加这个字段，而且没有指定serializationid），可能会导致反序列化失败；由于以上种种原因，我们可以自定义消息序列化机制，本文介绍Jackson2JsonMessageConverter序列化和反序列化。
+
+1. 发送端消息序列化
+
+   发送端消息序列化可以有两种方式
+
+   - 在发送消息时，通过java代码指定序列化方式
+
+     ~~~java
+     //设置消息序列化	    
+     rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+             List<User1> users = new ArrayList<>();
+             User1 user1 = new User1();
+             user1.setName("仙人之下我无敌");
+             user1.setAge(18);
+             user1.setSex("1");
+             users.add(user1);
+             user1 = new User1();
+             user1.setName("仙人之上一换一");
+             user1.setAge(20);
+             user1.setSex("0");
+             users.add(user1);
+             logger.info("sending msg by topic exchange begin>>>>");
+             //消息通过交换机topic_exchange发送到队列topic_queueq1和topic_queueq2
+             rabbitTemplate.convertAndSend("topic_exchange", "test.topic.", users);
+     ~~~
+
+     
+
+   - 通过配置类指定序列化方式
+
+     ~~~java
+     package com.example.demo2.config;
+     
+     import org.slf4j.Logger;
+     import org.slf4j.LoggerFactory;
+     import org.springframework.amqp.core.AcknowledgeMode;
+     import org.springframework.amqp.core.Message;
+     import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
+     import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+     import org.springframework.amqp.rabbit.connection.CorrelationData;
+     import org.springframework.amqp.rabbit.core.RabbitTemplate;
+     import org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory;
+     import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+     import org.springframework.context.annotation.Bean;
+     import org.springframework.context.annotation.Configuration;
+     
+     
+     @Configuration
+     public class RabbitMqConfig {
+         /**
+          * 可以自定义rabbitTemplate，同时定义消息序列化方式为Jackson
+          * 自定义的配置会优先于rabbitmq的自动配置加载，由于自动配置类上有@ConditionalOnClass({RabbitTemplate.class, Channel.class})注解，
+          * 所以自动配置类中的配置信息（比如RabbitTemplate）无效
+          * 同一个配置类中不允许有两个id相同的bean
+          * @return  RabbitTemplate类的一个实例，id为getRabbitTemplate
+          *
+          */
+         @Bean
+         public RabbitTemplate getRabbitTemplate(ConnectionFactory connectionFactory) {
+             RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+             rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+             return rabbitTemplate;
+         }
+     }
+     ~~~
+
+     
+
+2. 接收端消息序列化
+
+   接收端消息序列化机制，一般通过配置类实现，代码如下
 
 ~~~java
+package com.example.demo2.config;
 
-~~~
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.AcknowledgeMode;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-## 五、rabbitmq自定义配置类
 
-~~~java
-
+@Configuration
+public class RabbitMqConfig {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMqConfig.class);
+    /**
+     * 方法名最好使用rabbitListenerContainerFactory（默认的）
+     * 否则需要在@RabbitListener(queues = "topic_queueq2", containerFactory = "rabbitListenerContainerFactory1")注解中指定
+     */
+    //推荐
+    @Bean
+    public RabbitListenerContainerFactory<?> rabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
+        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+        factory.setConnectionFactory(connectionFactory);
+        //使用 JSON 配置rabbitmq消息队列的序列化和反序列化，不需要java对象再必须实现Serializable接口
+        factory.setMessageConverter(new Jackson2JsonMessageConverter());
+        return factory;
+    }
+    
+    //不是很推荐起名rabbitListenerContainerFactory1，除非需要配置多个监听机制
+    @Bean
+    public RabbitListenerContainerFactory<?> rabbitListenerContainerFactory1(ConnectionFactory connectionFactory) {
+        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+        factory.setConnectionFactory(connectionFactory);
+        //使用 JSON 配置rabbitmq消息队列的序列化和反序列化，不需要java对象再必须实现Serializable接口
+        factory.setMessageConverter(new Jackson2JsonMessageConverter());
+        return factory;
+    }
+}
 ~~~
 
 
