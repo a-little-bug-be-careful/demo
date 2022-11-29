@@ -104,6 +104,13 @@
             <version>5.3.7.RELEASE</version>
         </dependency>
 
+        <!-- 整合nacos注册中心 -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+            <version>2.2.5.RELEASE</version>
+        </dependency>
+
     </dependencies>
 
     <build>
