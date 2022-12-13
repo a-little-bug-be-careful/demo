@@ -1,23 +1,8 @@
 # redis-cluster集群搭建步骤
 
-## 一、参考文章
+## 一、docker搭建redis-cluster集群（三主三从）步骤
 
-三主三从redis cluster集群模式参考http://t.zoukankan.com/lfl17718347843-p-12332396.html
-
-> 但是上面这个教程讲的不全，需要放开三主三从服务器对应的端口，比如我搭建集群的端口采用6381、6382，就还需要额外放开6381+10000=16381、6382+10000=16382端口（集群总线端口），具体可参考如下两个链接：
-> https://blog.csdn.net/IT_rookie_newbie/article/details/120831949
-> https://blog.csdn.net/impressionw/article/details/88616509
->
-> 
->
-> centos7 放开端口命令：
->
-> firewall-cmd --zone=public --add-port=16381-16382/tcp --permanent
->
-> #集群总线
-> 每个Redis集群中的节点都需要打开两个TCP连接。一个连接用于正常的给Client提供服务，比如6379，还有一个额外的端口（通过在这个端口号上加10000）作为数据端口，例如：redis的端口为6379，那么另外一个需要开通的端口是：6379 + 10000， 即需要开启 16379。16379端口用于集群总线，这是一个用二进制协议的点对点通信信道。这个集群总线（Cluster bus）用于节点的失败侦测、配置更新、故障转移授权，等等。
-
-## 二、docker搭建redis-cluster集群步骤
+**以下安装步骤基于centos7系统，且提前安装了docker**
 
 > - 步骤一：准备三台主机ip1、ip2、ip3，每台主机上使用如下命令拉取redis镜像
 >
@@ -161,7 +146,7 @@
 >
 >      - 重启所有服务器的redis节点，再次创建集群（转到步骤五）
 
-## 三、springboot整合redis-cluster集群
+## 二、springboot整合redis-cluster集群
 
 1. 导入项目依赖
 
@@ -219,4 +204,3 @@
        database: 0
    ~~~
 
-   

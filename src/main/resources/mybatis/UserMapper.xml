@@ -19,9 +19,16 @@
         </where>
     </select>
 
-    <insert id="insertUser" parameterType="User">
+    <!-- 插入id字段，如果使用mybatis-plus的主键生成策略，此处mybatis-plus会生成主键值插入；否则，自动封装成null，由数据库插入数据时自动生成 -->
+    <insert id="insertUser" parameterType="User" useGeneratedKeys="true" keyProperty="id">
         insert into user(id, name, age, sex)
         values (#{id}, #{name}, #{age}, #{sex})
+    </insert>
+
+    <!-- 不插入id字段，默认使用数据库自增主键 -->
+    <insert id="insertUser1" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+        insert into user(name, age, sex)
+        values (#{name}, #{age}, #{sex})
     </insert>
 
     <delete id="deleteUser" parameterType="String">

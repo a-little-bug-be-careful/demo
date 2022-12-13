@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: service-provider  #服务提供者 服务名，也是注册的唯一标识
+  cloud:
+    nacos:
+      # 配置中心
+      config:
+        server-addr: 192.168.133.130:8848  # 配置nacos server的地址
+      # 配置服务提供者
+      discovery:
+        server-addr: 192.168.133.130:8848  # 配置nacos server的地址

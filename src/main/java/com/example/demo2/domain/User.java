@@ -2,10 +2,10 @@ package com.example.demo2.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-
 import java.io.Serializable;
 
 public class User implements Serializable {
+    //mybatis-plus的主键生成策略，使用mybatis-plus自增主键，同时数据库主键字段要设置成自增
     @TableId(type = IdType.AUTO)
     private Integer id;
     private String name;
