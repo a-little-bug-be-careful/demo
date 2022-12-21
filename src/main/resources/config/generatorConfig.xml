@@ -45,7 +45,7 @@
         </javaClientGenerator>
 
         <!-- 需要生成的数据库表 -->
-        <table schema="yujiang" tableName="test" domainObjectName="Test" enableCountByExample="false" enableDeleteByExample="false"
+        <table schema="study" tableName="sys_user" domainObjectName="SysUser1" enableCountByExample="false" enableDeleteByExample="false"
                enableSelectByExample="false" enableUpdateByExample="false">
         </table>
 
