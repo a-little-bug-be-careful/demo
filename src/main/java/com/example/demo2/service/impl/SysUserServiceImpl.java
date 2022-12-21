@@ -1,15 +1,17 @@
-package com.example.demo2.service;
+package com.example.demo2.service.impl;
 
 import com.example.demo2.domain.BusiException;
+import com.example.demo2.domain.InvokeResponse;
 import com.example.demo2.domain.SysUser;
 import com.example.demo2.mapper.SysUserMapper;
+import com.example.demo2.service.SysUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class SysUserServiceImpl implements SysUserService{
+public class SysUserServiceImpl implements SysUserService {
 
     @Autowired
     private SysUserMapper sysUserMapper;
@@ -17,7 +19,7 @@ public class SysUserServiceImpl implements SysUserService{
     @Override
     public SysUser getSysUserById(Integer id) {
         if (null == id) {
-            throw new BusiException("获取用户信息失败，参数错误");
+            throw new BusiException("查询用户信息出错，用户id为空");
         }
         SysUser sysUser = sysUserMapper.getSysUserById(id);
         return sysUser;
@@ -33,6 +35,9 @@ public class SysUserServiceImpl implements SysUserService{
     public int insertSysUser(SysUser sysUser) {
         if (StringUtils.isBlank(sysUser.getUserName())) {
             throw new BusiException("新增用户信息失败，用户名不能为空");
+        }
+        if (StringUtils.isBlank(sysUser.getPassWord())) {
+            throw new BusiException("新增用户信息失败，密码不能为空");
         }
         sysUser = sysUserMapper.getSysUserByName(sysUser.getUserName());
         if (null != sysUser) {
@@ -61,6 +66,9 @@ public class SysUserServiceImpl implements SysUserService{
 
     @Override
     public int updateSysUser(SysUser sysUser) {
+        if (null == sysUser.getId()) {
+            throw new BusiException("更新用户信息失败，用户id为空");
+        }
         int result = sysUserMapper.updateSysUser(sysUser);
         if (result > 0) {
             return result;
@@ -70,11 +78,11 @@ public class SysUserServiceImpl implements SysUserService{
     }
 
     @Override
-    public int deleteSysUsers(SysUser sysUser) {
-        if (StringUtils.isBlank(sysUser.getIds())) {
-            throw new BusiException("删除用户信息失败，用户id为空");
+    public int deleteSysUsers(String ids) {
+        if (StringUtils.isBlank(ids)) {
+            throw new BusiException("删除失败，用户id信息为空");
         }
-        int result = sysUserMapper.deleteSysUsers(StringUtils.split(sysUser.getIds(), ","));
+        int result = sysUserMapper.deleteSysUsers(StringUtils.split(ids, ","));
         if (result > 0) {
             return result;
         } else {
