@@ -48,8 +48,8 @@
 
     <!-- 不插入id字段，默认使用数据库自增主键 -->
     <insert id="insertSysUser" parameterType="SysUser" useGeneratedKeys="true" keyProperty="id">
-        insert into user(user_name, password, status, login_ip, update_by, create_by, create_time, update_time)
-        values (#{userName}, #{passWord}, #{status}, #{loginIp}, #{updateBy}, #{createBy}, #{createTime}, sysdate())
+        insert into sys_user(user_name, password, status, login_ip, update_by, create_by, create_time, update_time)
+        values (#{userName}, #{passWord}, #{status}, #{loginIp}, #{updateBy}, #{createBy}, sysdate(), sysdate())
     </insert>
 
     <delete id="deleteSysUserById" parameterType="String">

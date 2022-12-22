@@ -16,4 +16,6 @@ public class SysUser {
     private String createBy;
     private Date createTime;
     private Date updateTime;
+    private String beginDate;
+    private String endDate;
 }

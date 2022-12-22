@@ -1,13 +1,13 @@
 package com.example.demo2.service.impl;
 
 import com.example.demo2.domain.BusiException;
-import com.example.demo2.domain.InvokeResponse;
 import com.example.demo2.domain.SysUser;
 import com.example.demo2.mapper.SysUserMapper;
 import com.example.demo2.service.SysUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
@@ -32,6 +32,7 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     @Override
+    @Transactional
     public int insertSysUser(SysUser sysUser) {
         if (StringUtils.isBlank(sysUser.getUserName())) {
             throw new BusiException("新增用户信息失败，用户名不能为空");
@@ -39,10 +40,13 @@ public class SysUserServiceImpl implements SysUserService {
         if (StringUtils.isBlank(sysUser.getPassWord())) {
             throw new BusiException("新增用户信息失败，密码不能为空");
         }
-        sysUser = sysUserMapper.getSysUserByName(sysUser.getUserName());
-        if (null != sysUser) {
+        SysUser oldSysUser = sysUserMapper.getSysUserByName(sysUser.getUserName());
+        if (null != oldSysUser) {
             throw new BusiException("新增用户信息失败，用户名【" + sysUser.getUserName() + "】已存在");
         }
+        //TODO 待替换成shiro
+        sysUser.setCreateBy("admin");
+        sysUser.setUpdateBy("admin");
         int result = sysUserMapper.insertSysUser(sysUser);
         if (result > 0) {
             return result;

@@ -18,7 +18,7 @@ public class UserManageController {
     private SysUserService sysUserService;
 
     @GetMapping("/users")
-    public InvokeResponse<List<SysUser>> getSysUserList(@RequestBody SysUser sysUser) {
+    public InvokeResponse<List<SysUser>> getSysUserList(SysUser sysUser) {
         List<SysUser> users = sysUserService.getSysUserList(sysUser);
         return InvokeResponse.succ(users);
     }
