@@ -31,19 +31,33 @@
         </where>
     </select>
 
-    <select id="getSysUserById" parameterType="string" resultMap="SysUserResult">
+    <select id="getSysUserById" parameterType="String" resultMap="SysUserResult">
         select *
-        from sys_user where id = #{id}
+        from sys_user
+        where id = #{id}
     </select>
 
-    <select id="getSysUserByName" parameterType="string" resultMap="SysUserResult">
+    <select id="getSysUserByName" parameterType="String" resultMap="SysUserResult">
         select *
-        from sys_user where user_name = #{userName}
+        from sys_user
+        where user_name = #{userName}
     </select>
 
     <select id="checkExistSysUser" parameterType="SysUser" resultType="java.lang.Integer">
         select count(*)
-        from sys_user where user_name = #{userName} and password = #{passWord}
+        from sys_user
+        <where>
+            <if test="userName != null and passWord != ''">
+                and user_name = #{userName}
+            </if>
+            <if test="passWord != null and passWord != ''">
+                and password = #{passWord}
+            </if>
+        </where>
+    </select>
+
+    <select id="checkExistSysUserByUserName" parameterType="String" resultType="java.lang.Integer">
+        select count(*) from sys_user where user_name = #{userName}
     </select>
 
     <!-- 不插入id字段，默认使用数据库自增主键 -->
@@ -78,5 +92,11 @@
             update_time = sysdate()
         </set>
         where id = #{id}
+    </update>
+
+    <update id="updateSysUserByUserName" parameterType="SysUser">
+        update sys_user
+        set password = #{passWord}
+        where user_name = #{userName}
     </update>
 </mapper>

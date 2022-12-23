@@ -14,4 +14,6 @@ public interface SysUserMapper {
     int updateSysUser(SysUser sysUser);
     SysUser getSysUserByName(String userName);
     int checkExistSysUser(SysUser sysUser);
+    int updateSysUserByUserName(SysUser sysUser);
+    int checkExistSysUserByUserName(String userName);
 }
