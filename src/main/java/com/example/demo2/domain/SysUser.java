@@ -1,11 +1,10 @@
 package com.example.demo2.domain;
 
 import lombok.Data;
-
 import java.util.Date;
 
 @Data
-public class SysUser {
+public class SysUser extends Base{
     private Integer id;
     private String ids;
     private String userName;
@@ -16,6 +15,5 @@ public class SysUser {
     private String createBy;
     private Date createTime;
     private Date updateTime;
-    private String beginDate;
-    private String endDate;
+    private String role;
 }

@@ -48,6 +48,7 @@ public class SysUserServiceImpl implements SysUserService {
         //TODO 待替换成shiro
         sysUser.setCreateBy("admin");
         sysUser.setUpdateBy("admin");
+        sysUser.setStatus("1");
         int result = sysUserMapper.insertSysUser(sysUser);
         if (result > 0) {
             return result;
