@@ -123,10 +123,11 @@
             <version>1.18.20</version>
         </dependency>
 
+        <!--引入shrio-->
         <dependency>
             <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-core</artifactId>
-            <version>1.10.1</version>
+            <artifactId>shiro-spring-boot-starter</artifactId>
+            <version>1.5.3</version>
         </dependency>
 
     </dependencies>
