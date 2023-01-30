@@ -6,7 +6,6 @@ import com.example.demo2.domain.Student;
 import com.example.demo2.service.MongoTestService;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
-import io.lettuce.core.GeoArgs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +26,11 @@ import java.util.List;
 public class MongoTestServiceImpl implements MongoTestService {
 
     private Logger logger = LoggerFactory.getLogger(MongoTestServiceImpl.class);
+
+    /**
+     * MongoDB的使用MongoTemplate操作增删改查，分页，排序（含内嵌数据）
+     * https://www.codenong.com/cs106854254/
+     */
 
     @Autowired
     private MongoTemplate mongoTemplate;
