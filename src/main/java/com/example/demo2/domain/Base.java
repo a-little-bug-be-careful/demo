@@ -6,4 +6,6 @@ import lombok.Data;
 public class Base {
     private String beginDate;
     private String endDate;
+    private int pageNo;
+    private int pageSize;
 }

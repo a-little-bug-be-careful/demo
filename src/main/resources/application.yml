@@ -2,6 +2,11 @@ server:
   port: 8060
 
 spring:
+  data:
+    mongodb:
+      uri: mongodb://admin:123456@192.168.133.130:27017
+      database: demo_db
+      authenticationDatabase: admin
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://192.168.133.130:3306/study?serverTimezone=GMT%2B8&characterEncoding=utf8&useSSL=true
