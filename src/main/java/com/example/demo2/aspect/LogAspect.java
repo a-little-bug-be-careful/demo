@@ -1,5 +1,6 @@
 package com.example.demo2.aspect;
 
+import com.example.demo2.domain.InvokeResponse;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -37,7 +38,7 @@ public class LogAspect {
             return joinPoint.proceed();
         } catch (Throwable e) {
             LOGGER.error("{} exception msg", joinPoint.getSignature(), e);
-            return null;
+            return InvokeResponse.fail(e.getMessage());
         }
     }
 }

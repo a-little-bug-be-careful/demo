@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/nacos/config")
 @RefreshScope
 public class NacosConfigController {
-    @Value("${useLocalCache}")
+/*    @Value("${useLocalCache}")
     private boolean useLocalCache;
 
     @RequestMapping("/get")
     public boolean get() {
         return useLocalCache;
-    }
+    }*/
 }
