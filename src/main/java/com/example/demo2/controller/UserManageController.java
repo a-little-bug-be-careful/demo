@@ -5,6 +5,8 @@ import com.example.demo2.domain.SysUser;
 import com.example.demo2.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 /**
@@ -30,7 +32,7 @@ public class UserManageController {
     }
 
     @PostMapping("/user")
-    public InvokeResponse insertSysUser(@RequestBody SysUser sysUser) {
+    public InvokeResponse insertSysUser(@RequestBody SysUser sysUser, @RequestParam("file") MultipartFile file) {
         sysUserService.insertSysUser(sysUser);
         return InvokeResponse.succ("新增用户成功");
     }
