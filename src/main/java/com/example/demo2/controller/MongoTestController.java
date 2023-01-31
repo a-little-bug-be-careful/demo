@@ -6,6 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 @RestController
@@ -65,5 +72,25 @@ public class MongoTestController {
     public InvokeResponse getStudentsPage(MongoSysUser sysUser) {
         List<Student> students = mongoTestService.getStudentsPage(sysUser);
         return InvokeResponse.succ(students);
+    }
+
+    @PostMapping("file")
+    public InvokeResponse saveMongoFile(MongoFile mongoFile) {
+        mongoTestService.saveFile(mongoFile);
+        return InvokeResponse.succ();
+    }
+
+    @GetMapping("/file")
+    public InvokeResponse getMongoFile(MongoFile mongoFile, HttpServletResponse response) throws IOException {
+        MongoFile file = mongoTestService.getFile(mongoFile);
+        ServletOutputStream servletOutputStream = response.getOutputStream();
+        try {
+            byte[] bytes = file.getContent().getData();
+            servletOutputStream.write(bytes);
+        } catch (Exception e) {
+        } finally {
+            servletOutputStream.close();
+        }
+        return InvokeResponse.succ();
     }
 }

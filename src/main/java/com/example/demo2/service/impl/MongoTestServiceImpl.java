@@ -1,11 +1,12 @@
 package com.example.demo2.service.impl;
 
-import com.example.demo2.domain.ClassInfo;
-import com.example.demo2.domain.MongoSysUser;
-import com.example.demo2.domain.Student;
+import com.example.demo2.domain.*;
 import com.example.demo2.service.MongoTestService;
+import com.example.demo2.util.FileUtil;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
+import org.bson.types.Binary;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+
+import java.io.*;
 import java.util.Date;
 import java.util.List;
 
@@ -126,5 +129,28 @@ public class MongoTestServiceImpl implements MongoTestService {
         query.with(pageRequest);
         List<Student> students = mongoTemplate.find(query, Student.class, "student");
         return students;
+    }
+
+    /**
+     * 保存文件
+     * @param mongoFile
+     */
+    @Override
+    public void saveFile(MongoFile mongoFile) {
+        File file = new File(mongoFile.getPath());
+        mongoFile = new MongoFile("test", "jpg", file.length(), new Binary(FileUtil.fileToBytes(file, "")));
+        mongoFile.setId("1");
+        logger.info("saveFile:{}", mongoFile);
+    }
+
+    /**
+     * 读取文件
+     * @param mongoFile
+     * @return
+     */
+    @Override
+    public MongoFile getFile(MongoFile mongoFile) {
+        MongoFile file = mongoTemplate.findById(mongoFile.getId(), MongoFile.class, "mongoFile");
+        return file;
     }
 }

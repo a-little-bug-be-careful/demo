@@ -1,6 +1,7 @@
 package com.example.demo2.service;
 
 import com.example.demo2.domain.ClassInfo;
+import com.example.demo2.domain.MongoFile;
 import com.example.demo2.domain.MongoSysUser;
 import com.example.demo2.domain.Student;
 import java.util.List;
@@ -13,4 +14,6 @@ public interface MongoTestService {
     List<ClassInfo> getStudentsByClassName(String className);
     List<Student> getStudents(String name);
     List<Student> getStudentsPage(MongoSysUser sysUser);
+    void saveFile(MongoFile mongoFile);
+    MongoFile getFile(MongoFile mongoFile);
 }
