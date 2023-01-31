@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class MongoTestServiceImpl implements MongoTestService {
@@ -139,8 +140,9 @@ public class MongoTestServiceImpl implements MongoTestService {
     public void saveFile(MongoFile mongoFile) {
         File file = new File(mongoFile.getPath());
         mongoFile = new MongoFile("test", "jpg", file.length(), new Binary(FileUtil.fileToBytes(file, "")));
-        mongoFile.setId("1");
-        logger.info("saveFile:{}", mongoFile);
+        mongoFile.setId(UUID.randomUUID().toString());
+        MongoFile saveFile = mongoTemplate.save(mongoFile);
+        logger.info("saveFile:{}", saveFile);
     }
 
     /**
