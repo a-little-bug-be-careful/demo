@@ -32,8 +32,8 @@ public class UserManageController {
     }
 
     @PostMapping("/user")
-    public InvokeResponse insertSysUser(@RequestBody SysUser sysUser, @RequestParam("file") MultipartFile file) {
-        sysUserService.insertSysUser(sysUser);
+    public InvokeResponse insertSysUser(SysUser sysUser, @RequestParam("file") MultipartFile file) {
+        sysUserService.insertSysUser(sysUser, file);
         return InvokeResponse.succ("新增用户成功");
     }
 
@@ -47,5 +47,11 @@ public class UserManageController {
     public InvokeResponse update(@RequestBody SysUser sysUser) {
         sysUserService.updateSysUser(sysUser);
         return InvokeResponse.succ("更新成功");
+    }
+
+    @GetMapping("/image")
+    public InvokeResponse getUserHeaderImage(String userName) {
+        byte[] bytes = sysUserService.getUserHeaderImage(userName);
+        return InvokeResponse.succ(bytes);
     }
 }

@@ -36,7 +36,7 @@ public class LoginController {
 
     @PostMapping("/register")
     public InvokeResponse register(@RequestBody SysUser sysUser) {
-        int result = sysUserService.insertSysUser(sysUser);
+        int result = sysUserService.insertSysUser(sysUser, null);
         return result > 0 ? InvokeResponse.succ("注册成功，即将为您跳转登录页面") : InvokeResponse.fail("注册失败");
     }
 }

@@ -16,4 +16,5 @@ public interface MongoTestService {
     List<Student> getStudentsPage(MongoSysUser sysUser);
     void saveFile(MongoFile mongoFile);
     MongoFile getFile(MongoFile mongoFile);
+    MongoSysUser getHeaderImage(MongoSysUser mongoSysUser);
 }

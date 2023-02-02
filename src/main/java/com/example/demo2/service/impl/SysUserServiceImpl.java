@@ -2,20 +2,34 @@ package com.example.demo2.service.impl;
 
 import com.example.demo2.domain.BusiException;
 import com.example.demo2.domain.InvokeResponse;
+import com.example.demo2.domain.MongoSysUser;
 import com.example.demo2.domain.SysUser;
 import com.example.demo2.mapper.SysUserMapper;
 import com.example.demo2.service.SysUserService;
 import org.apache.commons.lang3.StringUtils;
+import org.bson.types.Binary;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Service
 public class SysUserServiceImpl implements SysUserService {
 
+    private Logger logger = LoggerFactory.getLogger(SysUserServiceImpl.class);
+
     @Autowired
     private SysUserMapper sysUserMapper;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     @Override
     public SysUser getSysUserById(Integer id) {
@@ -34,7 +48,7 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Override
     @Transactional
-    public int insertSysUser(SysUser sysUser) {
+    public int insertSysUser(SysUser sysUser, MultipartFile file) {
         if (StringUtils.isBlank(sysUser.getUserName())) {
             throw new BusiException("新增用户信息失败，用户名不能为空");
         }
@@ -50,11 +64,20 @@ public class SysUserServiceImpl implements SysUserService {
         sysUser.setUpdateBy("admin");
         sysUser.setStatus("1");
         int result = sysUserMapper.insertSysUser(sysUser);
-        if (result > 0) {
-            return result;
-        } else {
+        if (result == 0) {
             throw new BusiException("新增用户信息失败，服务异常");
         }
+
+        //保存用户头像
+        try {
+            MongoSysUser mongoSysUser = new MongoSysUser();
+            BeanUtils.copyProperties(sysUser, mongoSysUser);
+            mongoSysUser.setImage(new Binary(file.getBytes()));
+            mongoTemplate.save(mongoSysUser);
+        } catch (Exception e) {
+            logger.error("保存用户头像报错：{}", e);
+        }
+        return result;
     }
 
     @Override
@@ -131,5 +154,12 @@ public class SysUserServiceImpl implements SysUserService {
             return InvokeResponse.fail("用户名不存在");
         }
         return updateSysUserByUserName(sysUser);
+    }
+
+    @Override
+    public byte[] getUserHeaderImage(String userName) {
+        List<MongoSysUser> sysUsers = mongoTemplate.find(new Query(Criteria.where("user_name").is(userName)), MongoSysUser.class, "mongoSysUser");
+        MongoSysUser mongoSysUser = sysUsers.iterator().next();
+        return mongoSysUser.getImage().getData();
     }
 }

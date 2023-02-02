@@ -93,4 +93,18 @@ public class MongoTestController {
         }
         return InvokeResponse.succ();
     }
+
+    @GetMapping("/image")
+    public InvokeResponse getHeaderImage(MongoSysUser mongoSysUser, HttpServletResponse response) throws IOException {
+        MongoSysUser sysUser = mongoTestService.getHeaderImage(mongoSysUser);
+        ServletOutputStream servletOutputStream = response.getOutputStream();
+        try {
+            byte[] bytes = sysUser.getImage().getData();
+            servletOutputStream.write(bytes);
+        } catch (Exception e) {
+        } finally {
+            servletOutputStream.close();
+        }
+        return InvokeResponse.succ();
+    }
 }

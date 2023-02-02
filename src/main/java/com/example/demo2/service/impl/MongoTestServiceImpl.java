@@ -155,4 +155,11 @@ public class MongoTestServiceImpl implements MongoTestService {
         MongoFile file = mongoTemplate.findById(mongoFile.getId(), MongoFile.class, "mongoFile");
         return file;
     }
+
+    @Override
+    public MongoSysUser getHeaderImage(MongoSysUser mongoSysUser) {
+        List<MongoSysUser> mongoSysUsers = mongoTemplate.find(new Query(Criteria.where("user_name").is(mongoSysUser.getUserName())),
+                MongoSysUser.class, "mongoSysUser");
+        return mongoSysUsers.iterator().next();
+    }
 }
