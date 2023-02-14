@@ -5,10 +5,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -592,6 +589,20 @@ public class RedisUtil {
         return redisTemplate.opsForHash().increment(key, item, -by);
     }
 
+    /**
+     * 模糊删除key，传入key的正则表达式，即可删除所有匹配的key
+     * @param pattern
+     */
+    public void delKeysPatterns(String pattern) {
+        Set<String> keySet = redisTemplate.keys(pattern);
+        if (null != keySet && !keySet.isEmpty()) {
+            Iterator<String> iterator = keySet.iterator();
+            while (iterator.hasNext()) {
+                redisTemplate.delete(iterator.next());
+            }
+        }
+    }
+
     // ===============================HyperLogLog=================================
 
     public long pfadd(String key, String value) {
@@ -609,4 +620,5 @@ public class RedisUtil {
     public void pfmerge(String key1, String key2) {
         redisTemplate.opsForHyperLogLog().union(key1, key2);
     }
+
 }
