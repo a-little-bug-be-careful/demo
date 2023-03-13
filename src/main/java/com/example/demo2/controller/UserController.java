@@ -1,5 +1,6 @@
 package com.example.demo2.controller;
 
+import com.example.demo2.annotation.OperLog;
 import com.example.demo2.domain.InvokeResponse;
 import com.example.demo2.domain.User;
 import com.example.demo2.service.UserService;
@@ -15,6 +16,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @OperLog(title = "用户管理", msg = "获取用户信息")
     @GetMapping("/getUser")
     public InvokeResponse getUser(Integer id) {
         return this.userService.selectUser(id);
