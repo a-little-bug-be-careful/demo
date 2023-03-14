@@ -1,7 +1,6 @@
 package com.example.demo2.aspect;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.nacos.common.model.RestResult;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;

@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: service-provider  #服务提供者 服务名，也是注册的唯一标识
+  cloud:
+    nacos:
+      # 配置中心
+      config:
+        server-addr: 192.168.133.130:8848  # 配置nacos server的地址
+        # 配置文件的格式
+        file-extension: yaml
+        # 命名空间配置
+        namespace: 5928134e-5ffe-492c-8966-32643d433bdc
+        # 共享配置
+        shared-configs[0]:
+          data-id: common.yaml
+          refresh: true
+          # 下面这种共享配置也可以
+      #        shared-configs:
+#          - data-id: common.yaml  需要加 - 不然就需要像上面那样指明下标
+#            refresh: true
+      # 配置服务提供者
+      discovery:
+        server-addr: 192.168.133.130:8848  # 配置nacos server的地址
+        namespace: 5928134e-5ffe-492c-8966-32643d433bdc

@@ -1,39 +1,30 @@
 package com.example.demo2.controller;
 
+import com.example.demo2.config.NacosConfigCustomerProperties;
 import com.example.demo2.domain.*;
 import com.example.demo2.service.MongoTestService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 
 @RestController
 @RequestMapping("/mongo")
 @RefreshScope
 public class MongoTestController {
-    @Value("${database}")
-    private String database;
-
-    @Value("${authenticationDatabase}")
-    private String authentication;
-
-    @Value("${uri}")
-    private String uri;
 
     @Autowired
     private MongoTestService mongoTestService;
 
+    @Autowired
+    private NacosConfigCustomerProperties nacosConfigCustomerProperties;
+
     @GetMapping("/user")
     public InvokeResponse getUser(MongoSysUser sysUser) {
-        System.out.println(database + ";" + authentication + ";" + uri);
+        System.out.println(nacosConfigCustomerProperties.getImagePath());
         List<MongoSysUser> sysUsers = mongoTestService.getUser(sysUser);
         return InvokeResponse.succ(sysUsers);
     }
